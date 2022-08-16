@@ -2,22 +2,25 @@
 pragma solidity ^0.8.6;
 
 contract TestContract {
-    string private name;
-    uint private age;
 
-    function setName(string memory newName) public{
-        name = newName;
+    address public contractAdress = address(this);
+    address public owner; // адресс владельца
+    mapping (address => uint) public payments;
+
+    constructor() {
+        owner = msg.sender;
     }
 
-    function getName() view public returns(string memory) {
-        return name;
+    function pay() public payable {    //можно посмотреть был ли осуществлён перевод
+        payments[msg.sender] += msg.value;
     }
 
-    function setAge(uint newAge) public{
-        age = newAge;
+    function transferAll() public {
+        address payable _to = payable(owner);
+        _to.transfer(address(this).balance);
     }
 
-    function getAge() view public returns(uint) {
-        return age;
+    function contractBalance() public view returns(uint) {
+        return address(this).balance;
     }
 }
