@@ -3,24 +3,34 @@ pragma solidity ^0.8.6;
 
 contract TestContract {
 
-    address public contractAdress = address(this);
-    address public owner; // адресс владельца
-    mapping (address => uint) public payments;
+    mapping (address => uint) private cashHist;
+    address private owner;
 
-    constructor() {
+    constructor () {
         owner = msg.sender;
     }
 
-    function pay() public payable {    //можно посмотреть был ли осуществлён перевод
-        payments[msg.sender] += msg.value;
-    }
-
-    function transferAll() public {
-        address payable _to = payable(owner);
-        _to.transfer(address(this).balance);
-    }
-
-    function contractBalance() public view returns(uint) {
+    function getContractBalance() view public returns(uint) {
         return address(this).balance;
+    }
+
+    function getOwner() view public returns(address) {
+        return owner;
+    }
+
+    function getOwnerBalance() view public returns(uint) {
+        return owner.balance;
+    }
+
+    function pay() public payable {
+        cashHist[msg.sender] += msg.value;
+    }
+
+    function tranferToOwner() public {
+        payable(owner).transfer(address(this).balance);
+    }
+
+    function viewingPaymants(address _address) view public returns(uint) {
+        return cashHist[_address];
     }
 }
